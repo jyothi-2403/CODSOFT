@@ -45,5 +45,4 @@ An interactive quiz maker web application allowing users to navigate, create, an
 
 ---
 
-## 📄 License
-This repository is maintained for educational and demonstration purposes as part of the CODSOFT Internship program.
+
