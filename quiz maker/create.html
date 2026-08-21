@@ -1,0 +1,40 @@
+<h2>Create a Quiz</h2>
+<form id="quizForm">
+  <input type="text" id="title" placeholder="Quiz Title" required><br>
+  <div id="questions"></div>
+  <button type="button" onclick="addQuestion()">Add Question</button>
+  <button type="submit">Save Quiz</button>
+</form>
+
+<script>
+function addQuestion() {
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <input type="text" placeholder="Question" class="questionText"><br>
+    <input type="text" placeholder="Option 1" class="option"><br>
+    <input type="text" placeholder="Option 2" class="option"><br>
+    <input type="text" placeholder="Option 3" class="option"><br>
+    <input type="text" placeholder="Option 4" class="option"><br>
+    <input type="text" placeholder="Correct Answer" class="correctAnswer"><br><hr>
+  `;
+  document.getElementById('questions').appendChild(div);
+}
+
+document.getElementById('quizForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('title').value;
+  const questionDivs = document.querySelectorAll('#questions div');
+  const questions = Array.from(questionDivs).map(div => ({
+    questionText: div.querySelector('.questionText').value,
+    options: Array.from(div.querySelectorAll('.option')).map(o => o.value),
+    correctAnswer: div.querySelector('.correctAnswer').value
+  }));
+
+  await fetch('http://localhost:5000/createQuiz', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, questions })
+  });
+  alert('Quiz saved!');
+});
+</script>

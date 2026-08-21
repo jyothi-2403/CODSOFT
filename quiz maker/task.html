@@ -1,0 +1,42 @@
+<h2>Take Quiz</h2>
+<div id="quizContainer"></div>
+<button id="submitBtn">Submit Quiz</button>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const quizId = urlParams.get('id');
+let quizData, answers = [];
+
+async function loadQuiz() {
+  const res = await fetch(`http://localhost:5000/quizzes`);
+  const quizzes = await res.json();
+  quizData = quizzes.find(q => q._id === quizId);
+
+  const container = document.getElementById('quizContainer');
+  quizData.questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<p>${q.questionText}</p>`;
+    q.options.forEach(opt => {
+      div.innerHTML += `<label><input type="radio" name="q${i}" value="${opt}">${opt}</label><br>`;
+    });
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  quizData.questions.forEach((q, i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    answers[i] = selected ? selected.value : null;
+  });
+
+  const res = await fetch(`http://localhost:5000/submitQuiz/${quizId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers })
+  });
+  const result = await res.json();
+  alert(`Your score: ${result.score}/${result.total}`);
+});
+
+loadQuiz();
+</script>

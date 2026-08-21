@@ -1,0 +1,17 @@
+<h2>Available Quizzes</h2>
+<div id="quizList"></div>
+
+<script>
+async function loadQuizzes() {
+  const res = await fetch('http://localhost:5000/quizzes');
+  const quizzes = await res.json();
+  const listDiv = document.getElementById('quizList');
+  quizzes.forEach(q => {
+    const btn = document.createElement('button');
+    btn.innerText = q.title;
+    btn.onclick = () => window.location.href = `take.html?id=${q._id}`;
+    listDiv.appendChild(btn);
+  });
+}
+loadQuizzes();
+</script>
